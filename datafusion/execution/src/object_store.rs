@@ -21,7 +21,7 @@
 
 use dashmap::DashMap;
 use datafusion_common::{DataFusionError, Result};
-use object_store::local::LocalFileSystem;
+use object_store::memory::InMemory;
 use object_store::ObjectStore;
 use std::sync::Arc;
 use url::Url;
@@ -171,7 +171,7 @@ impl DefaultObjectStoreRegistry {
     /// This will register [`LocalFileSystem`] to handle `file://` paths
     pub fn new() -> Self {
         let object_stores: DashMap<String, Arc<dyn ObjectStore>> = DashMap::new();
-        object_stores.insert("file://".to_string(), Arc::new(LocalFileSystem::new()));
+        object_stores.insert("file://".to_string(), Arc::new(InMemory::new()));
         Self { object_stores }
     }
 }

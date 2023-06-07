@@ -89,26 +89,27 @@ impl ListingTableUrl {
 
     /// Creates a new [`ListingTableUrl`] interpreting `s` as a filesystem path
     fn parse_path(s: &str) -> Result<Self> {
-        let (prefix, glob) = match split_glob_expression(s) {
-            Some((prefix, glob)) => {
-                let glob = Pattern::new(glob)
-                    .map_err(|e| DataFusionError::External(Box::new(e)))?;
-                (prefix, Some(glob))
-            }
-            None => (s, None),
-        };
-
-        let path = std::path::Path::new(prefix).canonicalize()?;
-        let url = if path.is_dir() {
-            Url::from_directory_path(path)
-        } else {
-            Url::from_file_path(path)
-        }
-        .map_err(|_| DataFusionError::Internal(format!("Can not open path: {s}")))?;
-        // TODO: Currently we do not have an IO-related error variant that accepts ()
-        //       or a string. Once we have such a variant, change the error type above.
-
-        Ok(Self::new(url, glob))
+        Err(DataFusionError::Internal(format!("Can not open path: {s}")))
+        // let (prefix, glob) = match split_glob_expression(s) {
+        //     Some((prefix, glob)) => {
+        //         let glob = Pattern::new(glob)
+        //             .map_err(|e| DataFusionError::External(Box::new(e)))?;
+        //         (prefix, Some(glob))
+        //     }
+        //     None => (s, None),
+        // };
+        //
+        // let path = std::path::Path::new(prefix).canonicalize()?;
+        // let url = if path.is_dir() {
+        //     Url::from_directory_path(path)
+        // } else {
+        //     Url::from_file_path(path)
+        // }
+        // .map_err(|_| DataFusionError::Internal(format!("Can not open path: {s}")))?;
+        // // TODO: Currently we do not have an IO-related error variant that accepts ()
+        // //       or a string. Once we have such a variant, change the error type above.
+        //
+        // Ok(Self::new(url, glob))
     }
 
     /// Creates a new [`ListingTableUrl`] from a url and optional glob expression
